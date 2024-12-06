@@ -15,6 +15,8 @@ public:
   int64_t get_cpr() { return cpr_; }
   int64_t get_count() { return count_; }
 
+  virtual bool update() { return true; }
+
   virtual float get_rotation() { return static_cast<float>(count_) / cpr_; }
   virtual float get_rad() { return get_rotation() * 2 * M_PI; }
   virtual float get_degree() { return get_rotation() * 360; }

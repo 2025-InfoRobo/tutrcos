@@ -28,9 +28,11 @@ public:
   AMT22(peripheral::SPI &spi, peripheral::GPIO &cs, Resolution resolution,
         Mode mode)
       : EncoderBase{1 << utility::to_underlying(resolution)}, spi_{spi},
-        cs_{cs}, resolution_{resolution}, mode_{mode} {}
+        cs_{cs}, resolution_{resolution}, mode_{mode} {
+    cs_.write(true);
+  }
 
-  bool update() {
+  bool update() override {
     uint16_t cpr = 1 << utility::to_underlying(resolution_);
     std::array<uint8_t, 2> command{0x00, 0x00};
     uint16_t response;
