@@ -61,17 +61,20 @@ namespace module {
  * }
  * @endcode
  */
-class STS3215 : public EncoderBase {
+class STS3215 : public MotorBase {
 public:
   enum class Mode {
     RAD = 0,
     PWM = 2,
   };
 
-  STS3215(peripheral::UART &uart, Mode mode, uint8_t id)
-      : EncoderBase{ppr_}, uart_{uart}, mode_{mode}, id_{id} {}
+  STS3215(peripheral::UART &uart, Mode mode, uint8_t id,
+          EncoderBase *enc = nullptr)
+      : MotorBase{MotorBase::Dir::FORWARD, 1, 0,
+                  (enc == nullptr) ? 4096 : enc->get_cpr(), enc},
+        uart_{uart}, mode_{mode}, id_{id} {}
 
-  bool update() {
+  bool update() override {
     uint8_t rx_data[8] = {0};
     uart_.flush();
     if (send({0x02, 0x38, 0x02})) {

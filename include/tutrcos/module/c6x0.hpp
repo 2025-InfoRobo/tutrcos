@@ -7,7 +7,7 @@
 #include "tutrcos/peripheral/can_base.hpp"
 #include "tutrcos/utility.hpp"
 
-#include "encoder_base.hpp"
+#include "motor_base.hpp"
 
 namespace tutrcos {
 namespace module {
@@ -56,11 +56,11 @@ namespace module {
  * }
  * @endcode
  */
-class C6x0 : public EncoderBase {
+class C6x0 : public MotorBase {
 public:
-  enum class Type {
-    C610,
-    C620,
+  enum class Type : uint8_t {
+    C610 = 36,
+    C620 = 19,
   };
 
   enum class ID {
@@ -134,10 +134,26 @@ public:
     friend C6x0;
   };
 
-  C6x0(Manager &manager, Type type, ID id)
-      : EncoderBase{8192}, manager_{manager}, type_{type}, id_{id} {
+  // C6x0(Manager &manager, Type type, ID id)
+  //     : MotorBase{MotorBase::Dir::FORWARD,
+  //                 (1.0f / utility::to_underlying(type)), 0, 8192},
+  //       manager_{manager}, type_{type}, id_{id} {
+  //   TUTRCOS_VERIFY(manager_.motors_[utility::to_underlying(id_)] == nullptr);
+  //   manager_.motors_[utility::to_underlying(id_)] = this;
+  // }
+
+  C6x0(Manager &manager, Type type, ID id, EncoderBase *enc = nullptr)
+      : MotorBase{MotorBase::Dir::FORWARD,
+                  (1.0f / utility::to_underlying(type)), 0,
+                  (enc == nullptr) ? 8192 : enc->get_cpr(), enc},
+        manager_{manager}, type_{type}, id_{id} {
     TUTRCOS_VERIFY(manager_.motors_[utility::to_underlying(id_)] == nullptr);
     manager_.motors_[utility::to_underlying(id_)] = this;
+  }
+
+  bool update() override {
+    MotorBase::update();
+    return true;
   }
 
   ~C6x0() { manager_.motors_[utility::to_underlying(id_)] = nullptr; }
