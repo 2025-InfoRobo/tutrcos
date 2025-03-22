@@ -79,7 +79,7 @@ public:
       }
       core::Thread::delay(1);
     }
-    return HAL_CAN_AddTxMessage(hcan_, &tx_header, msg.data.data(),
+    return HAL_CAN_AddTxMessage(hcan_, &tx_header, (uint8_t*)msg.data.data(),
                                 &tx_mailbox) == HAL_OK;
   }
 
