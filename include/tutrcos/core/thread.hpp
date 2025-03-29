@@ -22,11 +22,10 @@ private:
 public:
   Thread(std::function<void()> &&func,uint32_t stack_size=STACK_SIZE,osPriority_t priority=PRIORITY) : func_{std::move(func)} {
     osThreadAttr_t attr = {};
-    attr.stack_size = stack_size;
+    attr.stack_size = std::max(stack_size,MINUMUM_STACK_SIZE);
     attr.priority = priority;
     thread_id_ = ThreadId{osThreadNew(func_internal, this, &attr)};
   }
-
 
   static inline void yield() { osThreadYield(); }
 
@@ -37,6 +36,7 @@ public:
   [[noreturn]] static inline void exit() { osThreadExit(); }
 
 private:
+  static constexpr uint32_t MINUMUM_STACK_SIZE = 512;
   static constexpr uint32_t STACK_SIZE = 4096;
   static constexpr osPriority_t PRIORITY = osPriorityNormal;
 
