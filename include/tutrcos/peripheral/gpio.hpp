@@ -72,8 +72,8 @@ private:
   uint16_t pin_;
   std::function<void()> callback_;
 
-  static inline std::array<GPIO *, 20> &get_instances() {
-    static std::array<GPIO *, 20> instances{};
+  static inline std::array<GPIO *, 21> &get_instances() {
+    static std::array<GPIO *, 21> instances{};
     return instances;
   }
 
